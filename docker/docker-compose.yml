@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+    php:
+        build:
+            args:
+                user: laravel
+                uid: 1000
+            context: php/
+            dockerfile: php.dockerfile
+        image: shopify-basic-crud-php
+        container_name: shopify-basic-crud-php
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ../:/var/www
+        networks:
+            - shopify-network
+    app:
+        image: nginx:alpine
+        container_name: shopify-basic-crud-app
+        restart: unless-stopped
+        ports:
+            - 8000:80
+        volumes:
+            - ../:/var/www
+            - ./nginx:/etc/nginx/conf.d/
+        networks:
+            - shopify-network
+networks:
+  shopify-network:
+      driver: bridge
