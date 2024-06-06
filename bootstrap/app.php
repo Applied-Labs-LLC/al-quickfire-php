@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Page not found'
+            ], 404);
+        });
         $exceptions->render(function (UninitializedContextException $exception) {
             return response()->json([
                 'error' => true,
