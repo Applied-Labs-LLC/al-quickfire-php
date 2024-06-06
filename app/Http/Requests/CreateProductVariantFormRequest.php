@@ -11,7 +11,7 @@ class CreateProductVariantFormRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class CreateProductVariantFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string',
+            'option1' => 'required|string',
+            'price' => 'required|string',
+            'option2' => 'string',
+            'option3' => 'string',
+            'sku' => 'string',
+            'position' => 'numeric',
         ];
     }
 }

@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\ProductVariantController;
 use App\Http\Middleware\JsonifyMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,11 @@ Route::middleware([JsonifyMiddleware::class])->group(function () {
     Route::post('/products/{productId}/images', [ProductImageController::class, 'store']);
     Route::put('/products/{productId}/images/{imageId}', [ProductImageController::class, 'update']);
     Route::get('/products/{productId}/images/{imageId}', [ProductImageController::class, 'show']);
+    Route::delete('/products/{productId}/images/{imageId}', [ProductImageController::class, 'delete']);
+
+    Route::get('/products/{productId}/variants', [ProductVariantController::class, 'index']);
+    Route::post('/products/{productId}/variants', [ProductVariantController::class, 'store']);
+    Route::put('/products/{productId}/variants/{variantId}', [ProductVariantController::class, 'update']);
+    Route::get('/products/{productId}/variants/{variantId}', [ProductVariantController::class, 'show']);
+    Route::delete('/products/{productId}/variants/{variantId}', [ProductVariantController::class, 'delete']);
 });

@@ -2,29 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTransferObjects\CreateProductImageDto;
-use App\DataTransferObjects\UpdateProductImageDto;
-use App\Http\Requests\CreateProductImageFormRequest;
-use App\Http\Requests\UpdateProductImageFormRequest;
-use App\Services\ShopifyProductService;
+use App\DataTransferObjects\CreateProductVariantDto;
+use App\DataTransferObjects\UpdateProductVariantDto;
+use App\Http\Requests\CreateProductVariantFormRequest;
+use App\Http\Requests\UpdateProductVariantFormRequest;
+use App\Services\ShopifyProductVariantService;
 use Psr\Http\Client\ClientExceptionInterface;
 use Shopify\Exception\UninitializedContextException;
 
 class ProductVariantController extends Controller
 {
     public function __construct(
-        private readonly ShopifyProductService $productService
+        private readonly ShopifyProductVariantService $productVariantService
     ) {
     }
 
     /**
+     * @throws UninitializedContextException
+     * @throws ClientExceptionInterface
      * @throws \JsonException
      */
     public function index(int $productId)
     {
-        $images = $this->productService->getVariants($productId);
+        $variants = $this->productVariantService->getAll($productId);
 
-        return response()->json($images);
+        return response()->json($variants);
     }
 
     /**
@@ -32,11 +34,11 @@ class ProductVariantController extends Controller
      * @throws ClientExceptionInterface
      * @throws \JsonException
      */
-    public function show(int $productId, int $imageId)
+    public function show(int $productId, int $variantId)
     {
-        $image = $this->productService->getVariantById($productId, $imageId);
+        $variant = $this->productVariantService->getById($productId, $variantId);
 
-        return response()->json($image);
+        return response()->json($variant);
     }
 
     /**
@@ -44,33 +46,37 @@ class ProductVariantController extends Controller
      * @throws ClientExceptionInterface
      * @throws \JsonException
      */
-    public function store(CreateProductImageFormRequest $request, int $productId)
+    public function store(CreateProductVariantFormRequest $request, int $productId)
     {
-        $createProductImageDto = CreateProductImageDto::fromRequest($request);
+        $createProductVariantDto = CreateProductVariantDto::fromRequest($request);
 
-        $image = $this->productService->createProductImage($productId, $createProductImageDto);
+        $variant = $this->productVariantService->create($productId, $createProductVariantDto);
 
-        return response()->json($image);
+        return response()->json($variant, 201);
     }
 
     /**
+     * @throws UninitializedContextException
+     * @throws ClientExceptionInterface
      * @throws \JsonException
      */
-    public function update(UpdateProductImageFormRequest $request, int $productId, int $imageId)
+    public function update(UpdateProductVariantFormRequest $request, int $productId, int $variantId)
     {
-        $updateProductImageDto = UpdateProductImageDto::fromRequest($imageId, $request);
+        $updateProductVariantDto = UpdateProductVariantDto::fromRequest($request);
 
-        $image = $this->productService->updateProductImage($productId, $imageId, $updateProductImageDto);
+        $variant = $this->productVariantService->update($productId, $variantId, $updateProductVariantDto);
 
-        return response()->json($image);
+        return response()->json($variant);
     }
 
     /**
      * @throws UninitializedContextException
      * @throws ClientExceptionInterface
      */
-    public function delete(int $productId, int $imageId)
+    public function delete(int $productId, int $variantId)
     {
-        $this->productService->deleteImage($productId, $imageId);
+        $this->productVariantService->delete($productId, $variantId);
+
+        return response()->noContent();
     }
 }
