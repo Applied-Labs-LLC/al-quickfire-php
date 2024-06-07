@@ -15,7 +15,7 @@ class UpdateProductDto
         private readonly ?string $productType,
         private readonly ?string $handle,
         private readonly ?string $tags,
-        private readonly ProductStatusEnum $status,
+        private readonly ?ProductStatusEnum $status,
         private readonly ?array $variants,
         private readonly ?array $options,
         private readonly ?array $images,
@@ -33,7 +33,7 @@ class UpdateProductDto
             $request->input('product_type'),
             $request->input('handle'),
             $request->input('tags'),
-            ProductStatusEnum::from($request->input('status')),
+            $request->has('status') ? ProductStatusEnum::from($request->input('status')) : null,
             $request->input('variants'),
             $request->input('options'),
             $request->input('images'),
@@ -43,12 +43,17 @@ class UpdateProductDto
 
     public function toArrray()
     {
-        return [
+        $data = [
             'title' => $this->title,
             'body_html' => $this->bodyHtml,
             'vendor' => $this->vendor,
             'product_type' => $this->productType,
-            'status' => $this->status->value,
         ];
+
+        if ($this->status) {
+            $data['status'] = $this->status->value;
+        }
+
+        return $data;
     }
 }
